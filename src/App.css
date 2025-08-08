@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+#root {
+  width: 100vw;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.content-height {
+  height: calc(100vh - 64px);
+}
+
+/* your-custom-table.css */
+.ant-table-cell {
+  padding: 4px 8px !important;
+  /* Default is ~16px */
+  line-height: 1.2;
+}
+
+.ant-table-thead>tr>th {
+  padding: 6px 8px !important;
+  background-color: #f0f0f0;
+  font-weight: 500;
+}
+
+.ant-table-tbody>tr>td {
+  padding: 4px 8px !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.ant-radio-button-wrapper-checked {
+  background-color: #1f2937 !important;
+  color: white;
+  border-color: #1f2937 !important;
+}
+
+
+
+.ant-radio-button-wrapper:hover {
+  color: #1f2937 !important;
+  /* color: white; */
+  border-color: #1f2937 !important;
+}
+
+.ant-radio-button-wrapper-checked:hover {
+  color: white !important;
+}
