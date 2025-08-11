@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { handleRequest } from "../utils/utils";
 import axiosInstance from "./index.js";// Ensure the correct import path for axiosInstance
-import data from '../../response.json'
 
 const EMPLOYEE_API = '/Employee/GetAll';
 

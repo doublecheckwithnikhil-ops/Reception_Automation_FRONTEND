@@ -1,7 +1,6 @@
 import { Select } from "antd";
 import { useGetAllEmployees } from "../apis/employee";
 import React, { useMemo, useState } from "react";
-import data from '../../response.json'
 
 const { Option } = Select;
 

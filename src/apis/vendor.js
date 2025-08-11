@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleRequest } from "../utils/utils";
 import axiosInstance from './index';
-import data from '../../response.json'
 
 const VENDOR_API = '/vendor';
 
