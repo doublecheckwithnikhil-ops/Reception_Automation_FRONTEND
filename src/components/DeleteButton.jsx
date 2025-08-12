@@ -1,44 +1,50 @@
-import { Button, Modal } from "antd"
+import { Button, Modal, Typography } from "antd"
 import { Delete, Trash } from "lucide-react";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useState } from "react";
 
+const { Text } = Typography;
 const { confirm } = Modal;
 
 const DeleteButton = ({ onClick }) => {
-    const [modal, contextHolder] = Modal.useModal();
-
-    const handleDelete = () => {
-        modal.confirm({
-            title: 'Are you sure you want to delete this item?',
-            icon: <ExclamationCircleOutlined  />,
-            content: 'This action cannot be undone.',
-            okText: 'Yes, delete it',
-            okType: 'danger',
-            cancelText: 'Cancel',
-            onOk: () => {
-                console.log('Item deleted');
-                onClick();
-                // your async delete logic here
-            },
-            onCancel() {
-                console.log("cancelled it ")
-                // Call your delete API here
-            }
-        });
-    };
-
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     return <>
         <Button
             variant="link"
             className="border-0 p-0 bg-transparent hover:to-blue-600 hover:underline focus:outline-0"
-            onClick={handleDelete}
+            onClick={() => setIsModalOpen(true)}
         // disabled={!data}
         >
             <Trash size={15} />
         </Button>
-        {contextHolder}
+        {/* {contextHolder} */}
+        <Modal
+            open={isModalOpen}
+            title={
+                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <ExclamationCircleOutlined style={{ color: "#faad14", fontSize: 20 }} />
+                    Delete Item
+                </span>
+            }
+            centered
+            onCancel={() => setIsModalOpen(false)}
+            footer={[
+                <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+                    Cancel
+                </Button>,
+                <Button
+                    key="delete"
+                    type="primary"
+                    danger
+                    onClick={() => onClick()}
+                >
+                    Delete
+                </Button>,
+            ]}
+        >
+            <Text>Are you sure you want to delete this item? This action cannot be undone.</Text>
+        </Modal>
     </>
 }
 
