@@ -2,6 +2,7 @@ import { Form, message, Modal, Select } from "antd";
 import { useCreateVendor, useGetVendorList } from "../apis/vendor";
 import VendorForm from "../components/VendorForm";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../context/AppContext";
 const { Option } = Select;
 
 const VendorInput = ({ handleVendorSelect, ...rest }) => {
@@ -12,6 +13,7 @@ const VendorInput = ({ handleVendorSelect, ...rest }) => {
     const [messageApi, contextHolder] = message.useMessage();
     const { value } = rest;
     const [formNewVendor] = Form.useForm();
+    const { user } = useAppContext();
 
     useEffect(() => {
         if (newVendor?.vendorContactNumber && (!isFetching)) {
@@ -44,7 +46,7 @@ const VendorInput = ({ handleVendorSelect, ...rest }) => {
             // status: 'Active',
             vendorAddress: values?.newVendorAddress,
             vendorContactNumber: values?.newVendorContact,
-            createdBy: "Admin",
+            createdBy: user?.id,
         }
 
         createVendor(formobj, {
@@ -109,6 +111,7 @@ const VendorInput = ({ handleVendorSelect, ...rest }) => {
                     <VendorForm
                         handleModalCancelNewVendor={handleModalCancelNewVendor}
                         isPending={isCreating}
+                        vendorList={vendorList}
                     />
                 </Form>
             </Modal>
