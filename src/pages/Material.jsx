@@ -22,13 +22,13 @@ const { TextArea } = Input;
 
 import Template from "../template/template";
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { employeeList } from '../utils/constant';
 // import MaterialForm from '../components/MaterialForm';
 const MaterialForm = React.lazy(() => import('../components/MaterialForm'))
 import { useCreateVendor, useGetVendorList } from '../apis/vendor';
-import { useCreateSendMaterial, useGetSendMaterials } from '../apis/sendMaterial';
-import { useCreateReceiveMaterial, useGetReceiveMaterials } from '../apis/receiveMaterial';
+import { useCreateSendMaterial, useDeleteSendMaterial, useGetSendMaterials, useUpdateSendMaterial } from '../apis/sendMaterial';
+import { useCreateReceiveMaterial, useDeleteReceiveMaterial, useGetReceiveMaterials, useUpdateReceiveMaterial } from '../apis/receiveMaterial';
 import VendorForm from '../components/VendorForm';
 import ViewDetailButton from '../components/ViewDetailButton';
 import { getFormatedDate, getFormatedTime } from '../utils/utils';
@@ -39,18 +39,53 @@ import { RefreshCwOff } from 'lucide-react';
 import dayjs from 'dayjs';
 import MaterialDetailView from '../components/MaterialDetailView';
 import PageTitle from '../components/PageTitle';
+import DeleteButton from '../components/DeleteButton';
 // import MaterialForm from './../components/MaterialForm12';
 
 // Initial dummy material data (empty for now, but ready for future additions)
 const initialMaterials = [];
 
+const columns = [
+    {
+        title: 'Date',
+        dataIndex: 'createdOn',
+        key: 'date',
+        render: getFormatedDate
+
+    },
+    // {// send/Receive 
+    //     title: 'Time',
+    //     dataIndex: 'createdOn',
+    //     key: 'date',
+    //     render: getFormatedTime
+
+    // },// send/Receive 
+    { title: 'Type', dataIndex: 'type', key: 'type' },
+    { title: 'Sender Name', dataIndex: 'senderName', key: 'senderName' },
+    // { title: 'Receptionist', dataIndex: 'reception', key: 'atReception' },
+
+    { title: 'Receiver Name', dataIndex: 'receiverName', key: 'receiverName' },
+    { title: 'Medium', dataIndex: 'receiveThrough', key: 'receiveThrough' },
+    // { title: 'Address', dataIndex: 'reciverAddress', key: 'reciverAddress' },
+    // { title: 'Consignment No', dataIndex: 'consignmentNo', key: 'consignmentNo' },
+    // { title: 'Weight/Count', dataIndex: 'weightOrCount', key: 'weightOrCount' },
+    { title: 'Division', dataIndex: 'division', key: 'division' },
+    // { title: 'Gate Pass No', dataIndex: 'gatePassNumber', key: 'gatePassNumber' },
+    // { title: 'Material Description', dataIndex: 'materialDescription', key: 'materialDescription' },
+    // { title: 'Bill/Challan No', dataIndex: 'billOrChallanNumber', key: 'billOrChallanNumber' },
+    // { title: 'Person Detail', dataIndex: 'personDetail', key: 'personDetail' },
+    // { title: 'Vehicle Detail', dataIndex: 'vehicleDetail', key: 'vehicleDetail' },
+];
+
 // Columns for the Material Table
 
 const Material = () => {
+    const {transtype } = useParams();
+    const navigate = useNavigate();
     const [rowId, setRowId] = useState(null);
     // const [materials, setMaterials] = useState(initialMaterials);SS
     const [filteredMaterials, setFilteredMaterials] = useState(initialMaterials);
-    const [isSend, setIsSend] = useState(false);
+    const [isSend, setIsSend] = useState(() => transtype == "send");
     const [isInternal, setIsInternal] = useState(false);
     const [initialFormData, setInitialFormData] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -63,47 +98,17 @@ const Material = () => {
     const [isViewOpen, setIsViewOpen] = useState(false);
     const [isModalNewVendor, setIsModalNewVendor] = useState(false);
 
-    const columns = [
-        {
-            title: 'Date',
-            dataIndex: 'createdOn',
-            key: 'date',
-            render: getFormatedDate
-
-        },
-        // {// send/Receive 
-        //     title: 'Time',
-        //     dataIndex: 'createdOn',
-        //     key: 'date',
-        //     render: getFormatedTime
-
-        // },// send/Receive 
-        { title: 'Type', dataIndex: 'type', key: 'type' },
-        { title: 'Sender Name', dataIndex: 'senderName', key: 'senderName' },
-        // { title: 'Receptionist', dataIndex: 'reception', key: 'atReception' },
-
-        { title: 'Receiver Name', dataIndex: 'receiverName', key: 'receiverName' },
-        { title: 'Medium', dataIndex: 'sendThrough', key: 'sendThrough' },
-        // { title: 'Address', dataIndex: 'reciverAddress', key: 'reciverAddress' },
-        // { title: 'Consignment No', dataIndex: 'consignmentNo', key: 'consignmentNo' },
-        // { title: 'Weight/Count', dataIndex: 'weightOrCount', key: 'weightOrCount' },
-        { title: 'Division', dataIndex: 'division', key: 'division' },
-        // { title: 'Gate Pass No', dataIndex: 'gatePassNumber', key: 'gatePassNumber' },
-        // { title: 'Material Description', dataIndex: 'materialDescription', key: 'materialDescription' },
-        // { title: 'Bill/Challan No', dataIndex: 'billOrChallanNumber', key: 'billOrChallanNumber' },
-        // { title: 'Person Detail', dataIndex: 'personDetail', key: 'personDetail' },
-        // { title: 'Vehicle Detail', dataIndex: 'vehicleDetail', key: 'vehicleDetail' },
-        {
-            title: 'Action',
-            dataIndex: '',
-            key: 'action',
-            render: (text, row) => (
-                <div className='flex justify-between w-9'>
-                    <ViewDetailButton data={row}  title={`Courier ${row.status}`}><MaterialDetailView data={row}/></ViewDetailButton>
-                    <EditButton onClick={() => handleEditTransction(row, isSend, true,)} />
-                </div>)
-        },
-    ];
+    const actionColumns = {
+        title: 'Action',
+        dataIndex: '',
+        key: 'action',
+        render: (text, row) => (
+            <div className='flex justify-between w-14'>
+                <ViewDetailButton data={row} title={`Courier ${row.status}`}><MaterialDetailView data={row} /></ViewDetailButton>
+                <EditButton onClick={() => handleEditTransction(row, isSend, true,)} />
+                <DeleteButton onClick={() => handleDelete(row)} />
+            </div>)
+    };
 
     const [columnsState, setColumns] = useState(columns)
 
@@ -112,14 +117,22 @@ const Material = () => {
 
     const { checkUserIsLogin, user } = useAppContext();
 
+    useEffect(() => {
+        setIsSend(transtype == "send")
+    }, [transtype])
+
     const empty = useMemo(() => [], []);
     // const isSkip = useMemo(() => !isSend, [isSend]);
     /* SEND MATERIAL APIS */
     const { data: sendMaterials = empty, isLoading: isGetSendMaterialLoading } = useGetSendMaterials(isSend);
     const { mutate: sendMatrialTransction, isPending: isPostSendMaterialLoading } = useCreateSendMaterial();
+    const { mutate: updateSendTrans, isPending: isUpdateSendMaterialLoading } = useUpdateSendMaterial();
+    const { mutate: deleteSendTans, isPending: isDeletingSend } = useDeleteSendMaterial();
     /* RECEIVE MATERIAL APIS */
     const { data: receiveMaterial = empty, isGetReceiveMaterialLoading } = useGetReceiveMaterials(!isSend);
     const { mutate: receiveMatrialTransction, isPending: isPostReceiveMaterialLoading } = useCreateReceiveMaterial();
+    const { mutate: updateReceiveTrans, isPending: isUpdateReceiveLoading } = useUpdateReceiveMaterial();
+    const { mutate: deleteReceiveTans, isPending: isDeletingReceiving } = useDeleteReceiveMaterial();
 
     const { mutate: createVendor, isLoading: isCreating, error: createError } = useCreateVendor();
     const { data: vendorList = empty, isLoading: isLoadingVendor } = useGetVendorList();
@@ -135,6 +148,33 @@ const Material = () => {
 
     const recieverName = Form.useWatch('receiverName', form);
     const senderName = Form.useWatch('senderName', form);
+
+    const handleDelete = (row) => {
+        messageApi.open({
+            type: 'loading',
+            content: 'Deleting...',
+            key: 'courier-delete',
+        });
+
+        const deleteTans = isSend ? deleteSendTans : deleteReceiveTans;
+
+        deleteTans(row.id, {
+            onSuccess: () => {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Courier Entry deleted successfully!',
+                    key: 'courier-delete',
+                });
+            },
+            onError: () => {
+                messageApi.open({
+                    type: 'error',
+                    content: 'Failed to delete Courier Entry. Please try again.',
+                    key: 'courier-delete',
+                });
+            }
+        });
+    }
 
     const handleEditTransction = (row, isSend, isUpdate = false) => {
         if (!user) {
@@ -211,6 +251,7 @@ const Material = () => {
                 outDate: dayjs(row.outDate),
                 inDate: dayjs(row.inDate)
             };
+            debugger;
 
             form.setFieldsValue(init)
             setIsModalVisible(true)
@@ -266,6 +307,8 @@ const Material = () => {
         }
     };
 
+    console.log("CHECK USER LOGIN", { user });
+
     // Function to handle form submission
     const handleFormSubmit = (values) => {
         const key = "material-loading"
@@ -309,7 +352,8 @@ const Material = () => {
             }
         }
 
-        const user = JSON.parse(sessionStorage.getItem("employess"))
+        const user = JSON.parse(sessionStorage.getItem("employess"));
+        const isNew = !rowId;
 
         const objForm = {
             // employeeAtReception: "Receptionist",
@@ -319,23 +363,21 @@ const Material = () => {
             senderCode,
             receiverCode,
             receiverId: (+receiverId),
-            employeeAtReception: user?.id,
-            reciverCode: receiverCode,
-            reciverId: (+receiverId),
-            reciverName: receiverName,
-            reciverAddress: values.receiverAddress,
+            employeeAtReception: isNew ? user?.id : undefined,
             pickedByName,
             pickedByCode,
             pickedById,
+            updatedBy: isNew ? undefined : user?.id,
+            id: rowId
         }
 
         const wholeForm = { ...values, ...objForm }
         // return false; 
-        const isNew = !rowId;
+
 
         if (isSendTransction) {
-            const send = isNew ? sendMatrialTransction : sendMatrialTransction;
-            send({ ...values, ...objForm }, {
+            const send = isNew ? sendMatrialTransction : updateSendTrans;
+            send(wholeForm, {
 
                 onSuccess: () => {
 
@@ -359,8 +401,9 @@ const Material = () => {
             })
         }
         else {
-            const receive = isNew ? receiveMatrialTransction : receiveMatrialTransction;
-            receive({ ...values, ...objForm }, {
+            const receive = isNew ? receiveMatrialTransction : updateReceiveTrans;
+            debugger
+            receive(wholeForm, {
                 onSuccess: () => {
                     setIsModalVisible(false); // Close the modal
                     form.resetFields();
@@ -439,13 +482,18 @@ const Material = () => {
         const mediumSendColumn = { title: 'Medium', dataIndex: 'sendThrough', key: 'sendThrough' };
         const mediumReceiveColumn = { title: 'Medium', dataIndex: 'receiveThrough', key: 'receiveThrough' };
         const medium = isSend ? mediumSendColumn : mediumReceiveColumn
-        columnsState.splice(4, 1, medium)
-        setColumns([...columnsState]);
+        columns.splice(4, 1, medium)
+        setColumns([...columns]);
     }, [isSend])
+
+    // useEffect(() => {
+    //     // columnsState.splice(6, 1, actionColumns)
+    //     setColumns(pre => [...pre.splice(6, 1, actionColumns)]);
+    // }, [user, isSend])
 
     const materialProps = {
         // title: "Material Management",
-        columns: columnsState,
+        columns: [...columnsState, actionColumns],
         openForm: () => setIsModalVisible(true),
         AddNewLabel: "Add Material Transction"
     }
@@ -502,13 +550,14 @@ const Material = () => {
             </Space>
 
             {/* Filter Container */}
-            <div style={{ marginBottom: 16 }} className='grid grid-cols-3'>
+            <div style={{ marginBottom: 16 }} className='grid  grid-cols-6'>
                 <Input
                     placeholder="Search by info"
                     prefix={<SearchOutlined />}
                     style={{ width: 300 }}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
                     allowClear
+                    className='col-span-2'
                 />
                 {/* <Space> 
                     <Switch 
@@ -525,30 +574,29 @@ const Material = () => {
                         defaultChecked 
                         onChange={(checked) => form.setFieldValue("transactionType", checked ? "Receive" : "Send")} 
                     /> */}
-                {/* <Select
-                        placeholder="Select Category"
-                        style={{ width: 200 }}
-                        onChange={(value) => handleFilterChange('category', value)}
-                        value={filters.category}
-                        allowClear
-                        showSearch // Enables searching within the dropdown
-                    >
-                        <Option value="Electronics">Electronics</Option>
-                        <Option value="Handicrafts">Handicrafts</Option>
-                        <Option value="Software">Software</Option>
-                    </Select> */}
-                {/* </Space> */}
-
                 <Radio.Group
                     defaultValue="a"
                     buttonStyle="solid"
-                    onChange={({ target }) => setIsSend(target.value == "send")}
+                    onChange={({ target }) => navigate(`/courier/${target.value}`)}
                     value={isSend ? "send" : "receive"}
-
                 >
                     <Radio.Button value="receive">Receive</Radio.Button>
                     <Radio.Button value="send">Send</Radio.Button>
                 </Radio.Group>
+                <Select
+                    placeholder="Select Type"
+                    style={{ width: 200 }}
+                    onChange={(value) => handleFilterChange('type', value)}
+                    value={filters.type}
+                    defaultValue={""}
+                >
+                    <Option value="">All</Option>
+                    <Option value="internal">Internal</Option>
+                    <Option value="vendor">Vendor</Option>
+                </Select>
+                {/* </Space> */}
+
+
 
                 {/* <Switch
                     unCheckedChildren="Receive"
@@ -585,7 +633,7 @@ const Material = () => {
                 onCancel={handleModalCancel}
                 footer={null}
                 width={800} // Adjust modal width for better form layout
-                className="top-7 "
+                className="top-7"
             >
                 <Card>
                     <Suspense fallback={<div className='h-screen flex justify-center items-center'>Loading form...</div>}>
@@ -613,7 +661,7 @@ const Material = () => {
                     layout="vertical"
                     name="add_new_vendor_form"
                     onFinish={handleFormSubmitNewVendor}
-                    initialValues={{ type: 'vendor', transactionType: "receive" }} // Default type
+                    // initialValues={{ type: 'vendor', transactionType: transtype }} // Default type
                 >
                     <VendorForm handleModalCancelNewVendor={handleModalCancelNewVendor} />
                 </Form>
