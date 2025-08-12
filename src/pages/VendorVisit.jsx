@@ -4,7 +4,7 @@ import { Button, Card, Form, Input, message, Modal, Space, Switch, Typography } 
 import VendorVisitForm from "../components/VendorVisitForm";
 import { useGetVendorList } from "../apis/vendor";
 import { useCreateVendor } from "../apis/vendor";
-import { useCreateVendorVisit, useGetVendorVisits, useUpdateVendorVisit, useUpdateVendorVisitOutTime } from "../apis/vendorVisit";
+import { useCreateVendorVisit, useDeleteVendorVisit, useGetVendorVisits, useUpdateVendorVisit, useUpdateVendorVisitOutTime } from "../apis/vendorVisit";
 import ViewDetailButton from "../components/ViewDetailButton";
 import { useAppContext } from "../context/AppContext";
 import { Helmet } from "react-helmet";
@@ -15,6 +15,7 @@ import { getFormatedTime } from "../utils/utils";
 import OutTimeSwitch from "../components/outTimeSwitch";
 import VendorVisitDetailView from "../components/VendorVisitDetailView";
 import PageTitle from "../components/PageTitle";
+import DeleteButton from "../components/DeleteButton";
 
 const { Title } = Typography;
 
@@ -37,6 +38,7 @@ const VendorVisit = () => {
     const { mutate: createVendorVisit, isPending: isCreatingVist } = useCreateVendorVisit();
     const { mutate: updateVendorVisit, isPending: isUpdatingVisit } = useUpdateVendorVisit();
     const { mutate: updateOutTime, isPending: isUpdating } = useUpdateVendorVisitOutTime();
+     const { mutate: deleteVendorVisit, isPending: isDeleteing } = useDeleteVendorVisit();
 
     useEffect(() => {
         let newFilteredData = vendorVisitList;
@@ -213,6 +215,30 @@ const VendorVisit = () => {
         }
     }
 
+    const handleDelete = (row) => {
+        messageApi.open({
+            type: 'loading',
+            content: 'Deleting...',
+            key: 'vendor-visit-delete',
+        });
+        deleteVendorVisit(row.id, {
+            onSuccess: () => {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Vendorv Visit deleted successfully!',
+                    key: 'vendor-visit-delete',
+                });
+            },
+            onError: () => {
+                messageApi.open({
+                    type: 'error',
+                    content: 'Failed to delete Vendor Visit. Please try again.',
+                    key: 'vendor-visit-delete',
+                });
+            }
+        });
+    }
+
     const columns = useMemo(() => ([
         {
             title: 'Date',
@@ -239,13 +265,14 @@ const VendorVisit = () => {
             title: 'Out Time',
             dataIndex: 'outTime',
             key: 'inTime',
-            render: (text, row) => text && getFormatedTime("2023-01-01T" + text.split(".")[0]) ||
+            render: (text, row) => (
                 <OutTimeSwitch
                     id={row.id}
                     outTime={text}
                     updateOutTime={updateOutTime}
-                    isPending={isUpdating}
+                // isPending={isUpdating}
                 />
+            )
 
             // <Switch
             //     loading={isUpdating}
@@ -265,12 +292,13 @@ const VendorVisit = () => {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            render: (text, row) => (<div className="flex justify-between w-14">
+            render: (text, row) => (<div className="flex justify-between w-20">
                 <ViewDetailButton data={row}  >
                     <VendorVisitDetailView data={row} />
                 </ViewDetailButton>
                 <EditButton onClick={() => handleOpenCopyOrUpdate(row, true)} />
                 <AddNewButton onClick={() => handleOpenCopyOrUpdate(row)} />
+                <DeleteButton onClick={() => handleDelete(row)} />
             </div>),
         },
     ]));
@@ -350,19 +378,6 @@ const VendorVisit = () => {
                 title="Add New Vendor Visit"
                 width={800}
                 className="top-1"
-            // styles={{
-            //     content: {
-            //         backgroundColor: '#f0f2f5', // Light gray background        
-            //     },
-            //     header: {
-            //         backgroundColor: '#1890ff', // Ant Design primary color
-            //         color: '#fff', // White text for contrast
-            //     },
-            //     footer: {
-
-            //         backgroundColor: '#f0f2f5', // Light gray background for footer
-            //     }
-            // }}
             >
                 <VendorVisitForm
                     {...{

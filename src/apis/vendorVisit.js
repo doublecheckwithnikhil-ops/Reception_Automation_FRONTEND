@@ -24,6 +24,10 @@ export const updateVendorVisitOutTime = async (id) => {
     return handleRequest(() => axios.post(`${BASE_URL}/update-outtime`, {id}));
 };
 
+export const deleteVendorVisit = async (id) => {
+    return handleRequest(() => axios.delete(`${BASE_URL}/${id}`));
+};
+
 export const useGetVendorVisits = () => {
     return useQuery({
         queryKey: ['vendorvisit'],
@@ -90,6 +94,21 @@ export const useUpdateVendorVisitOutTime = () => {
     });
 
 };
+
+export const useDeleteVendorVisit = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteVendorVisit,
+        onSuccess: () => {
+            // message.success('Candidate visit created successfully');
+            queryClient.invalidateQueries({ queryKey: ['vendorvisit'] }); // Invalidate the candidate visits list to refetch
+        },
+        onError: (error) => {
+
+            // message.error(`Error creating candidate visit: ${error.message}`);
+        }
+    });
+}
 
 // Uncomment if you want to use the old axios instance directly
 // import axios from '../utils/axiosInstance';
