@@ -21,7 +21,7 @@ export const updateCandidateVisit = async (data) => {
 };
 
 export const updateCandidateVisitOutTime = async (id) => {
-    return handleRequest(() => axios.post(`${BASE_URL}/update--outtime`, { id }));
+    return handleRequest(() => axios.post(`${BASE_URL}/update-outtime`, { id }));
 };
 
 export const deleteCandidateVisit = async (id) => {

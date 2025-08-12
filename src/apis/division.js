@@ -16,7 +16,7 @@ export const useGetDivisions = () => {
         queryFn: getDivisions,
         refetchOnWindowFocus: false,
         retry: 1,
-        initialData: data.division
+        initialData: []
     });
 }
 
