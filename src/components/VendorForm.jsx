@@ -1,13 +1,14 @@
 import { Button, Form, Input, Space } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
-const VendorForm = ({ handleModalCancelNewVendor, isPending}) => {
+const VendorForm = ({ handleModalCancelNewVendor, isPending, vendorList }) => {
     return (
         <>
             <Form.Item
                 name="newVendorName"
                 label="Vendor Name"
-                rules={[{ required: true, message: `Please enter vendor name` }]}
+                rules={[
+                    { required: true, message: `Please enter vendor name` }]}
             >
                 <Input placeholder="Enter Vendor Name" />
             </Form.Item>
@@ -29,6 +30,20 @@ const VendorForm = ({ handleModalCancelNewVendor, isPending}) => {
                     pattern: /^\d{10}$/, // Regex for exactly 10 digits
                     message: 'Please enter a 10-digit mobile number!',
                 },
+                {
+
+                    validator: async (r, v, c) => {
+                        return await new Promise((res, rej) => {
+                            const i = vendorList.findIndex(ven => v.includes(ven.vendorContactNumber));
+                            if (i > -1) {
+                                rej(`Vendor already exist! Vendor Name: ${vendorList[i].vendorName}`)
+                            } else {
+                                res(i)
+                            }
+                        })
+                    },
+                    // validateTrigger: ""
+                }
                 ]}
             >
                 <Input placeholder="Enter Contact Number" />
