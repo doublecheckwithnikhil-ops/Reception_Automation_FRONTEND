@@ -29,8 +29,8 @@ const Daashboard = () => {
         The layout is responsive and adapts to different screen sizes.
       </p> */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <CustomCard data={receiveMaterial} title="Courier Transction (IN)" path="/courier" compKey="receiver" />
-        <CustomCard data={sendMaterials} title="Courier Transction (OUT)" path="/courier" compKey="send" />
+        <CustomCard data={receiveMaterial} title="Courier Transction (IN)" path="/courier/receive" compKey="receiver" />
+        <CustomCard data={sendMaterials} title="Courier Transction (OUT)" path="/courier/send" compKey="send" />
         <CustomCard data={vendorVisitList} title="Vendor Visit" path="/vendor-visit" compKey="vendor" />
         <CustomCard data={candidate} title="Candidate Visit" path="/candidate-visit" compKey="candidate" />
       </div>

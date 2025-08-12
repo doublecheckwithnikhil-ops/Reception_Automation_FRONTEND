@@ -1,13 +1,19 @@
 import { Button, Form, Radio, Space } from "antd";
-import { useRef, } from "react";
+import { useEffect, useRef, } from "react";
 import CommonForm from "./material/commonform";
 import SendForm from "./material/SendForm";
 import ReceiveForm from "./material/ReceiveForm";
 import dayjs from "dayjs";
+import { useParams } from "react-router";
 
 const MaterialForm = ({ form, handleFormSubmit, handleModalCancel, handleVendorSelect, isFormSubmitting }) => {
     const ref = useRef(new Date());
+     const {transtype } = useParams();
 
+     useEffect(() => {
+        form.setFieldValue('transactionType', transtype)
+     }, [transtype])
+     
     return (
         <Form
             form={form}
@@ -16,7 +22,7 @@ const MaterialForm = ({ form, handleFormSubmit, handleModalCancel, handleVendorS
             onFinish={handleFormSubmit}
             initialValues={{
                 type: 'internal',
-                transactionType: "receive",
+                transactionType: transtype,
                 inDate: dayjs(ref.current),
                 outDate: dayjs(ref.current)
 

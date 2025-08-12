@@ -46,7 +46,7 @@ function MainContent() {
       <Routes>
         <Route path="/vendor-visit" element={<VendorVisit />} />
         <Route
-          path="/courier"
+          path="/courier/:transtype"
           element={<Material />}
         />
         <Route path="/candidate-visit" element={<CandidateVisit />} />

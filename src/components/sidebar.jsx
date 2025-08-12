@@ -18,7 +18,7 @@ export default function Sidebar() {
     // Array of sidebar items
     const sidebarItems = [
         { name: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" />, path: '/' },
-        { name: 'Courier', icon: <Package className="w-5 h-5" />, path: '/courier' },
+        { name: 'Courier', icon: <Package className="w-5 h-5" />, path: '/courier/receive' },
         { name: 'Vendor Visit', icon: <Truck className="w-5 h-5" />, path: '/vendor-visit' },
         { name: 'Candidate Visit', icon: <Users className="w-5 h-5" />, path: '/candidate-visit' }, // Using Home icon as a placeholder for Candidate Visit
         // { name: 'Driver', icon: <CarTaxiFront className="w-5 h-5" />, path: '/driver' },
@@ -28,6 +28,9 @@ export default function Sidebar() {
     const content = (
         <div>{`${user?.name} (${user?.eCode})`}</div>
     );
+
+    console.log("CHECK USER LOGIN" , { user });
+    
 
     return (
         <div
