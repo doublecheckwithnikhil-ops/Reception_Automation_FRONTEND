@@ -31,7 +31,7 @@ const CandidateVisit = () => {
     const { mutate: updateOutTime, isPending: isUpdating } = useUpdateCandidateVisitOutTime();
     const { mutate: deleteCandidateVisit, isPending: isDeleteing } = useDeleteCandidateVisit();
 
-    const handleEidtDetail = (row, isUpdate = false) => {
+    const handleEditDetail = (row, isUpdate = false) => {
 
         if (!user) {
             checkUserIsLogin();
@@ -106,12 +106,13 @@ const CandidateVisit = () => {
             title: 'Out Time',
             dataIndex: 'outTime',
             key: 'inTime',
-            render: (text, row) => (text && getFormatedTime("2023-01-01T" + text.split(".")[0])) && false || <OutTimeSwitch
-                id={row.id}
-                outTime={text}
-                updateOutTime={updateOutTime}
-                isPending={isUpdating}
-            />
+            render: (text, row) => (
+                <OutTimeSwitch
+                    id={row.id}
+                    outTime={text}
+                    updateOutTime={updateOutTime}
+                />
+            )
         },
         {
             title: 'Action',
@@ -119,9 +120,9 @@ const CandidateVisit = () => {
             key: 'action',
             render: (text, row) => (<div className="flex justify-between w-14 ">
                 <ViewDetailButton data={row} >
-                    <CandidateVisitDetail data={row}/>
+                    <CandidateVisitDetail data={row} />
                 </ViewDetailButton>
-                <EditButton onClick={() => handleEidtDetail(row, true)} />
+                <EditButton onClick={() => handleEditDetail(row, true)} />
                 <DeleteButton onClick={() => handleDelete(row)} />
             </div>),
         },
@@ -208,11 +209,14 @@ const CandidateVisit = () => {
         const [hrId, hrName, hrECode] = values.hrECode.split("_");
 
         const payload = {
+            ...initialFormData,
             ...values,
             // hrName: employeeList.find(emp => emp.empId === values.hrECode)?.name || values.hrCode,
             hrId,
             hrName,
-            hrECode
+            hrECode,
+            id: rowId,
+            outTime: rowId ? initialFormData.outTime : undefined
         }
 
         //     {
@@ -224,7 +228,9 @@ const CandidateVisit = () => {
         //     hrName: 'Priya Sharma',
         //     time: '10:00 AM',
         // },
-        createCandidateVisitEntry(payload, {
+        const postData = rowId ? updateCandidateVisit : createCandidateVisitEntry;
+
+        postData(payload, {
             onSuccess: () => {
                 messageApi.open({
                     key,
@@ -232,6 +238,7 @@ const CandidateVisit = () => {
                     content: 'Candidate Visit Entry Created',
                 });
                 setIsModalVisible(false); // Close the modal
+                setInitialFormData(null);
                 form.resetFields();
             },
             onError: () => {
@@ -380,6 +387,12 @@ const CandidateVisit = () => {
                             label="Purpose of Visit"
                         >
                             <Input placeholder="Enter Purpose of Visit(optional)" />
+                        </Form.Item>
+                        <Form.Item
+                            name="remarks"
+                            label="Remarks"
+                        >
+                            <Input placeholder="Enter Remarks" />
                         </Form.Item>
                         <Form.Item style={{ marginTop: 20, width: '100%', textAlign: "center" }}>
                             <Space>
