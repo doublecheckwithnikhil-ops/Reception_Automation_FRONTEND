@@ -10,7 +10,7 @@ const { TextArea } = Input;
 const CommonForm = React.memo(() => {
     return (
         <>
-         <Form.Item
+            <Form.Item
                 name="materialDescription"
                 label="Material Description"
             >
@@ -20,7 +20,7 @@ const CommonForm = React.memo(() => {
             <Form.Item
                 name="divisionId"//change to divisionId
                 label="Division"
-            // rules={[{ required: true, message: 'Please select a division!' }]}
+                rules={[{ required: true, message: 'Please select a division!' }]}
             >
                 <DivisionInput />
             </Form.Item>
@@ -85,7 +85,6 @@ const CommonForm = React.memo(() => {
             >
                 <Input placeholder="Enter consignment number (optional)" />
             </Form.Item>
-            
 
             {/* Person Detail */}
             <Form.Item
