@@ -20,7 +20,7 @@ const SendForm = React.memo(({ form, handleVendorSelect }) => {
             </Form.Item>
             <Form.Item
                 name="type"
-                label="Type sender"
+                label="Type"
                 rules={[{ required: true, message: 'Please select a type!' }]}
             >
                 <Select placeholder="Select type">
@@ -35,12 +35,13 @@ const SendForm = React.memo(({ form, handleVendorSelect }) => {
                 <>
                     <Form.Item
                         name="receiverIdIndex"
-                        label="Vendor Name sender"
+                        label="Vendor Name"
                         rules={[{ required: true, message: 'Please enter a vendor!' }]}
                     >
                         <VendorInput onChange={handleVendorSelect} />
 
                     </Form.Item>
+                    {/* FOR  CAPTURE RECEIVERNAME, RECEIVERID */}
                     <Form.Item name="receiverName" hidden>
                         <input />
                     </Form.Item>
@@ -49,15 +50,15 @@ const SendForm = React.memo(({ form, handleVendorSelect }) => {
                     </Form.Item>
                     <Form.Item
                         name="receiverAddress"
-                        label="Address sender"
+                        label="Address"
 
                     >
                         <TextArea rows={2} readOnly placeholder="Enter address or it will auto-populate" />
                     </Form.Item>
                     <Form.Item
                         name="receiverContactNo"
-                        label="Contact sender"
-                    // rules={[{ required: true, message: 'Please enter the address!' }]}
+                        label="Contact"
+                    rules={[{ required: true, message: 'Please enter the address!' }]}
                     >
                         <Input readOnly placeholder="Enter contact or it will auto-populate" />
                     </Form.Item>
@@ -67,21 +68,21 @@ const SendForm = React.memo(({ form, handleVendorSelect }) => {
                 <>
                     <Form.Item
                         name="receiverName"
-                        label="Receiver Name sender"
-                    // rules={[{ required: true, message: 'Please enter Receiver name!' }]}
+                        label="Receiver Name"
+                    rules={[{ required: true, message: 'Please enter Receiver name!' }]}
                     >
                         <EmmployeeList placeholder="Receiver Employee Name" />
                     </Form.Item>
                     <Form.Item
                         name="receiverAddress"
-                        label="Address sender"
-                    // rules={[{ required: true, message: 'Please enter the address!' }]}
+                        label="Address"
+                    rules={[{ required: true, message: 'Please enter the address!' }]}
                     >
                         <TextArea rows={2} placeholder="Enter address or it will auto-populate" />
                     </Form.Item>
                     <Form.Item
                         name="receiverContactNo"
-                        label="Receiver Contact sender"
+                        label="Receiver Contact"
                         rules={[
                             { required: true, message: 'Please enter the address!' },
                             {
@@ -104,14 +105,14 @@ const SendForm = React.memo(({ form, handleVendorSelect }) => {
             </Form.Item> */}
             <Form.Item
                 name="senderName"
-                label="Sender Name sender"
+                label="Sender Name"
                 rules={[{ required: true, message: 'Please enter Receiver/Sender Employee!' }]}
             >
                 <EmmployeeList placeholder="Sender Name" />
             </Form.Item>
             <Form.Item
                 name="sendThrough"
-                label="Send Through sender"
+                label="Send Through"
                 rules={[{ required: true, message: `Please select Send Through!` }]}
             >
                 <Select placeholder="Select method">

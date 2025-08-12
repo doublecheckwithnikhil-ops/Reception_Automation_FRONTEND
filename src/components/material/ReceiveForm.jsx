@@ -64,15 +64,16 @@ const ReceiveForm = React.memo(({ form, handleVendorSelect }) => {
                     </Form.Item>
                     <Form.Item
                         name="senderAddress"
-                        label="Address"
+                        label="Vendor Address"
+                        rules={[{ required: true, message: 'Please sender Address!' }]}
 
                     >
                         <TextArea rows={2} readOnly placeholder="Enter address or it will auto-populate" />
                     </Form.Item>
                     <Form.Item
                         name="senderContactNo"
-                        label="Contact"
-                    // rules={[{ required: true, message: 'Please enter the address!' }]}
+                        label="Vendor Contact"
+                        rules={[{ required: true, message: 'Please sender contact!' }]}
                     >
                         <InputNumber readOnly placeholder="Enter contact or it will auto-populate" className="w-full" />
                     </Form.Item>
@@ -83,14 +84,14 @@ const ReceiveForm = React.memo(({ form, handleVendorSelect }) => {
                     <Form.Item
                         name="senderName"
                         label="Sender Name"
-                    // rules={[{ required: true, message: 'Please enter Sender name!' }]}
+                    rules={[{ required: true, message: 'Please enter Sender name!' }]}
                     >
                         <EmmployeeList placeholder="Sender (Employee Name)" />
                     </Form.Item>
                     <Form.Item
                         name="senderAddress"
-                        label="Address"
-                    // rules={[{ required: true, message: 'Please enter the address!' }]}
+                        label="Sender Address"
+                    rules={[{ required: true, message: 'Please enter the address!' }]}
                     >
                         <TextArea rows={2} placeholder="Enter address or it will auto-populate" />
                     </Form.Item>
