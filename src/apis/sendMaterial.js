@@ -33,8 +33,12 @@ const getMaterialById = (id) => {
 };
 
 // Update material (PUT)
-const updateMaterial = (id, data) => {
-    return handleRequest(axiosInstance.put(`${MATERIAL_API}/${id}`, data));
+const updateMaterial = (data) => {
+    return handleRequest(axiosInstance.post(`${MATERIAL_API}/update`, data));
+};
+
+export const deleteMaterial = (id) => {
+    return handleRequest(axiosInstance.delete(`${MATERIAL_API}/delete/${id}`));
 };
 
 const useGetMaterials = (enabled = true) => {
@@ -52,23 +56,24 @@ const useCreateMaterial = () => {
     return useMutation({
         mutationFn: createMaterial,
         onSuccess: () => {
-            // message.success('Material created successfully');
             queryClient.invalidateQueries({ queryKey: ['sendMaterials'] }); // Invalidate the materials list to refetch
         },
         onError: (error) => {
-            message.error(`Error creating material: ${error.message}`);
+            console.error(`Error creating material: ${error.message}`);
+           
         }
     });
 }
 
 const useUpdateMaterial = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: updateMaterial,
         onSuccess: () => {
-            message.success('Material updated successfully');
+            queryClient.invalidateQueries({ queryKey: ['sendMaterials'] });
         },
         onError: (error) => {
-            message.error(`Error updating material: ${error.message}`);
+            console.error(`Error updating material: ${error.message}`);
         }
     });
 }
@@ -86,15 +91,31 @@ const useGetMaterialsToday = (enabled = true) => {
     });
 };
 
+const useDeleteMaterial = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteMaterial,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['sendMaterials'] }); // Invalidate the materials list to refetch
+        },
+        onError: (error) => {
+            console.error(`Error creating material: ${error.message}`);
+             debugger;
+        }
+    });
+}
+
 const useGetSendMaterials = useGetMaterials;
 const useCreateSendMaterial = useCreateMaterial;
 const useUpdateSendMaterial = useUpdateMaterial;
 const useGetSendMaterialsToday = useGetMaterialsToday
+const useDeleteSendMaterial  = useDeleteMaterial;
 
 export {
     useGetSendMaterials,
     useCreateSendMaterial,
     useUpdateSendMaterial,
-    useGetSendMaterialsToday
+    useGetSendMaterialsToday,
+    useDeleteSendMaterial
 }
 

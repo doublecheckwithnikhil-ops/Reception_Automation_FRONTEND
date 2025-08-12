@@ -33,9 +33,28 @@ export const getMaterialById = (id) => {
 };
 
 // Update material (PUT)
-export const updateMaterial = (id, data) => {
-    return handleRequest(axiosInstance.put(`${MATERIAL_API}/${id}`, data));
+export const updateMaterial = (data) => {
+    return handleRequest(axiosInstance.post(`${MATERIAL_API}/update`, data));
 };
+
+export const deleteMaterial = (id) => {
+    return handleRequest(axiosInstance.delete(`${MATERIAL_API}/delete/${id}`));
+};
+
+const useDeleteMaterial = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteMaterial,
+        onSuccess: () => {
+            message.success('Material created successfully');
+            queryClient.invalidateQueries({ queryKey: ['materials'] }); // Invalidate the materials list to refetch
+        },
+        onError: (error) => {
+            message.error(`Error creating material: ${error.message}`);
+        }
+    });
+}
+
 
 const useGetMaterials = (enabled = true) => {
     return useQuery({
@@ -62,10 +81,12 @@ const useCreateMaterial = () => {
 }
 
 const useUpdateMaterial = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: updateMaterial,
         onSuccess: () => {
-            message.success('Material updated successfully');
+            // message.success('Material updated successfully');
+            queryClient.invalidateQueries({ queryKey: ['materials'] });
         },
         onError: (error) => {
             message.error(`Error updating material: ${error.message}`);
@@ -90,11 +111,13 @@ const useGetMaterialsToday = (enabled = true) => {
 const useGetReceiveMaterials = useGetMaterials;
 const useCreateReceiveMaterial = useCreateMaterial;
 const useUpdateReceiveMaterial = useUpdateMaterial;
-const useGetReceiveMaterialsToday = useGetMaterialsToday
+const useGetReceiveMaterialsToday = useGetMaterialsToday;
+const useDeleteReceiveMaterial  = useDeleteMaterial;
 
 export {
     useGetReceiveMaterials,
     useCreateReceiveMaterial,
     useUpdateReceiveMaterial,
-    useGetReceiveMaterialsToday
+    useGetReceiveMaterialsToday,
+    useDeleteReceiveMaterial
 }
