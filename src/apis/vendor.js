@@ -21,7 +21,7 @@ export const useGetVendorList = () => {
         queryFn: getVendorList,
         refetchOnWindowFocus: false,
         retry: 1,
-        initialData: data.vendor
+        initialData: []
     });
 }
 

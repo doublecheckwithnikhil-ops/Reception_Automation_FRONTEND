@@ -29,7 +29,7 @@ export const useGetAllEmployees = (query = {}) => {
             queryFn: () =>  getAllEmployees(query),
             refetchOnWindowFocus: false,
             retry: 1,
-            initialData:data.employeelist,
+            initialData:[],
             select: (data) => !Array.isArray(data) ?[] : data.map((employee) => ({    
                 id: employee.employeeId,
                 name: `${employee.firstName || ""} ${employee.middleName || ""} ${employee.lastName || ""}`,
