@@ -14,6 +14,7 @@ const DriverPage = React.lazy(() => import('./pages/Driver'));
 import Login from './components/login';
 import { AppProvider } from './context/AppContext';
 import Daashboard from './pages/Dashboard';
+import MainContent from './components/MainContent';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,8 +23,6 @@ const queryClient = new QueryClient({
     },
   },
 })
-
-
 
 
 // Main App component
@@ -39,26 +38,7 @@ function App() {
 
 
 // Main Content area (for demonstration)
-function MainContent() {
-  return (
 
-    <main className="flex-1 p-8 pt-4 pb-0 ml-52">
-      <Routes>
-        <Route path="/vendor-visit" element={<VendorVisit />} />
-        <Route
-          path="/courier/:transtype"
-          element={<Material />}
-        />
-        <Route path="/candidate-visit" element={<CandidateVisit />} />
-        <Route path="/driver" element={<DriverPage />} />
-        {/* Optional: Add a default redirect or home page */}
-        <Route path="/" element={<Daashboard />} />
-        <Route path="/vendors" element={<Daashboard />} />
-      </Routes>
-    </main>
-    // </div>
-  );
-}
 
 const AppWrapper = () => (
   <QueryClientProvider client={queryClient}>

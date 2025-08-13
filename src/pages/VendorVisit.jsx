@@ -90,7 +90,6 @@ const VendorVisit = () => {
 
         const isUpdate = !!rowId;
         if (isUpdate) {
-            debugger;
             const updateForm = {
                 id: initialFormData.id,
                 isAppointment: submitForm?.isAppointment,

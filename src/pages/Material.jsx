@@ -40,6 +40,7 @@ import dayjs from 'dayjs';
 import MaterialDetailView from '../components/MaterialDetailView';
 import PageTitle from '../components/PageTitle';
 import DeleteButton from '../components/DeleteButton';
+import Loading from '../components/Loading';
 // import MaterialForm from './../components/MaterialForm12';
 
 // Initial dummy material data (empty for now, but ready for future additions)
@@ -80,7 +81,7 @@ const columns = [
 // Columns for the Material Table
 
 const Material = () => {
-    const {transtype } = useParams();
+    const { transtype } = useParams();
     const navigate = useNavigate();
     const [rowId, setRowId] = useState(null);
     // const [materials, setMaterials] = useState(initialMaterials);SS
@@ -158,7 +159,7 @@ const Material = () => {
 
         const deleteTans = isSend ? deleteSendTans : deleteReceiveTans;
 
-        deleteTans(row.id, {
+        deleteTans({ id: row.id, deletedBy: user.id }, {
             onSuccess: () => {
                 messageApi.open({
                     type: 'success',
@@ -244,6 +245,7 @@ const Material = () => {
             const init = {
                 ...row,
                 senderIdIndex,
+                senderName,
                 receiverIdIndex,
                 transactionType,
                 receiverName,
@@ -251,7 +253,6 @@ const Material = () => {
                 outDate: dayjs(row.outDate),
                 inDate: dayjs(row.inDate)
             };
-            debugger;
 
             form.setFieldsValue(init)
             setIsModalVisible(true)
@@ -355,23 +356,47 @@ const Material = () => {
         const user = JSON.parse(sessionStorage.getItem("employess"));
         const isNew = !rowId;
 
-        const objForm = {
-            // employeeAtReception: "Receptionist",
+        const form = {
+            pickedByName,
+            pickedByCode,
+            pickedById: (+pickedById),
             receiverName,
+            receiverCode,
+            receiverId: (+receiverId),
             senderName,
             senderId: (+senderId),
             senderCode,
-            receiverCode,
-            receiverId: (+receiverId),
-            employeeAtReception: isNew ? user?.id : undefined,
-            pickedByName,
-            pickedByCode,
-            pickedById,
-            updatedBy: isNew ? undefined : user?.id,
-            id: rowId
+            senderAddress:values.senderAddress,
+            senderContactNo: values.senderContactNo,
+
+            type: values.type,
+            divisionId: (+values.divisionId),
+            receiveThrough: values.receiveThrough,
+            consignmentNo: values.consignmentNo || "",
+            materialWeight: values.materialWeight,
+            materialCount: values.materialCount || 0,
+            containerType: values.containerType,
+            courierPersonDetails: values.courierPersonDetails,
+            vehicleDetails: values.vehicleDetails,
+            gatePassNumber: values.gatePassNumber,
+            materialDescription:values.materialDescription,
+            billOrChallanNumber: values.billOrChallanNumber || "",
+
+            employeeAtReception: isNew ? user?.id : initialFormData?.employeeAtReception ,
+            courierCompany: values.courierCompany || "",
+            inDate: values.inDate,
+            amount: values.amount || 0,
+            remarks: values.remarks || "",
         }
 
-        const wholeForm = { ...values, ...objForm }
+        const updateFormAdditionalField = {
+            id: initialFormData?.id,
+            status: initialFormData?.status,
+            inTime: initialFormData?.inTime,
+            updatedBy: isNew ? undefined : user?.id,
+        }
+
+        const wholeForm = { ...form, ...updateFormAdditionalField };
         // return false; 
 
 
@@ -389,6 +414,8 @@ const Material = () => {
                         type: 'success',
                         content: 'Submitted Successfully',
                     });
+                    setRowId(null);
+                    setInitialFormData(null)
                 },
                 onError: () => {
                     // let key = 'matrial-send-error';
@@ -402,7 +429,6 @@ const Material = () => {
         }
         else {
             const receive = isNew ? receiveMatrialTransction : updateReceiveTrans;
-            debugger
             receive(wholeForm, {
                 onSuccess: () => {
                     setIsModalVisible(false); // Close the modal
@@ -415,6 +441,8 @@ const Material = () => {
                         type: 'success',
                         content: 'Submitted Successfully',
                     });
+                    setRowId(null);
+                    setInitialFormData(null)
                     // }, 3000);
                 },
                 onError: () => {
@@ -621,12 +649,15 @@ const Material = () => {
                     }}
                 /> */}
             </div>
-            <Template
-                data={filteredMaterials || []}
-                {...materialProps}
-            />
-
-
+            <div className='relative'>
+                {(isSend ? isGetSendMaterialLoading : isGetReceiveMaterialLoading)
+                    && <Loading />
+                }
+                <Template
+                    data={filteredMaterials || []}
+                    {...materialProps}
+                />
+            </div>
             {isModalVisible && <Modal
                 title="Add New Material Entry"
                 open={isModalVisible}
@@ -636,7 +667,7 @@ const Material = () => {
                 className="top-7"
             >
                 <Card>
-                    <Suspense fallback={<div className='h-screen flex justify-center items-center'>Loading form...</div>}>
+                    <Suspense fallback={<Loading />}>
                         <MaterialForm
                             {...{
                                 form,
@@ -661,7 +692,7 @@ const Material = () => {
                     layout="vertical"
                     name="add_new_vendor_form"
                     onFinish={handleFormSubmitNewVendor}
-                    // initialValues={{ type: 'vendor', transactionType: transtype }} // Default type
+                // initialValues={{ type: 'vendor', transactionType: transtype }} // Default type
                 >
                     <VendorForm handleModalCancelNewVendor={handleModalCancelNewVendor} />
                 </Form>

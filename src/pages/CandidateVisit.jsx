@@ -204,7 +204,6 @@ const CandidateVisit = () => {
             content: 'Submitting...',
         });
         console.log('Received values of form: ', values);
-        debugger;
         // 114423_RANJEET KUMAR  _V38597
         const [hrId, hrName, hrECode] = values.hrECode.split("_");
 

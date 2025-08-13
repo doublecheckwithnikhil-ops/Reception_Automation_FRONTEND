@@ -37,8 +37,8 @@ export const updateMaterial = (data) => {
     return handleRequest(axiosInstance.post(`${MATERIAL_API}/update`, data));
 };
 
-export const deleteMaterial = (id) => {
-    return handleRequest(axiosInstance.delete(`${MATERIAL_API}/delete/${id}`));
+export const deleteMaterial = ({id, deletedBy}) => {
+    return handleRequest(axiosInstance.delete(`${MATERIAL_API}/delete/${id}?deletedBy=${deletedBy}`));
 };
 
 const useDeleteMaterial = () => {

@@ -1,6 +1,6 @@
 import { Button, Popover } from "antd";
 import { CarTaxiFront, Info, LayoutDashboard, LogOut, Package, Truck, User, Users } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useAppContext } from "../context/AppContext";
 
@@ -30,13 +30,9 @@ export default function Sidebar() {
     );
 
     console.log("CHECK USER LOGIN" , { user });
-    
-
     return (
         <div
-            className={`fixed left-0 top-0 h-screen flex flex-col bg-gray-800 text-white transition-all duration-300 ease-in-out
-        ${isOpen ? 'w-52' : 'w-20'}
-        `} // Sidebar width for desktop (md and up) and mobile (collapsed/expanded)
+            className={`fixed w-52 left-0 top-0  h-screen flex flex-col bg-gray-800 text-white transition-all duration-300 ease-in-out `} // Sidebar width for desktop (md and up) and mobile (collapsed/expanded)
         >
             {/* Sidebar Header with Toggle Button */}
             <div className="flex items-center justify-between p-4 border-b border-gray-700">

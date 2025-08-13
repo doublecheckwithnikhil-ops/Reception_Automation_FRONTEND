@@ -100,7 +100,6 @@ const useDeleteMaterial = () => {
         },
         onError: (error) => {
             console.error(`Error creating material: ${error.message}`);
-             debugger;
         }
     });
 }
